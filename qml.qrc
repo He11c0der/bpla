@@ -1,5 +1,27 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>LibObj.qml</file>
+        <file>ItmMap.qml</file>
+        <file>ItmSquare.qml</file>
+        <file>Lmdl.qml</file>
+    </qresource>
+    <qresource prefix="/image">
+        <file>image/area-transformed.png</file>
+        <file>image/area.png</file>
+        <file>image/search-transformed.png</file>
+        <file>image/sun.png</file>
+        <file>image/imgObjAcstc/carAcstc.jpg</file>
+        <file>image/imgObjAcstc/elStnAcstc.jpg</file>
+        <file>image/imgObjAcstc/tankAcstc.jpg</file>
+        <file>image/imgObjTplvsn/carTplvsn.jpg</file>
+        <file>image/imgObjTplvsn/elStnTplvsn.jpg</file>
+        <file>image/imgObjTplvsn/tankTplvsn.jpg</file>
+        <file>image/imgTypeIntlgnc/imgAcstc.png</file>
+        <file>image/imgTypeIntlgnc/imgTplvsn.png</file>
+        <file>image/imgTypeIntlgnc/imgRed.png</file>
+        <file>image/imgMainPage/imgLib.png</file>
+        <file>image/imgMainPage/pause.png</file>
+        <file>image/imgMainPage/repeat.png</file>
     </qresource>
 </RCC>
