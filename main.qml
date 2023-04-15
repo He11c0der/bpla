@@ -8,17 +8,17 @@ Window {
     // property bool seek: false
     property int nmbrSqr_8: 0
     property int nmbrIncrmnt: 1
-    property int nmbrSqr_onTop: 12
-    property int nmbrSqr_onBottom: 18
+    // property int nmbrSqr_onTop: 12
+    property int nmbrSqr_onBottom: 0
     property int xBPLA: 25
     property int yBPLA_8: 50
-    property int yBPLA_DG_onTop: 175
-    property int yBPLA_DG_onBot: 250
+    // property int yBPLA_DG_onTop: 175
+    property int yBPLA_DG_onBot: 25
     property int cntrUp: 0
     // property var arr : new Array(50)
     property var rprtr: itmMap.rptr
     property var bpla_8: itmMap.rctnglBPLA_8
-    property var bpla_DG_onTop: itmMap.rctnglBPLA_onTop_doubleGals
+    // property var bpla_DG_onTop: itmMap.rctnglBPLA_onTop_doubleGals
     property var bpla_DG_onBot: itmMap.rctnglBPLA_onBot_doubleGals
     property var anmtn_DG: itmMap.prllAnmtnDoubleGals
     //property int : value
@@ -28,6 +28,7 @@ Window {
 
     property int cntrTurn: 0
     property int prmtrVector: 2
+    property var arrSqr: ["qrc:/image/image/imgMap/imgSquareMap/sqr1.png", "qrc:/image/image/imgMap/imgSquareMap/sqr2.png", "qrc:/image/image/imgMap/imgSquareMap/sqr3.png", "qrc:/image/image/imgMap/imgSquareMap/sqr4.png", "qrc:/image/image/imgMap/imgSquareMap/sqr5.png", "qrc:/image/image/imgMap/imgSquareMap/sqr6.png", "qrc:/image/image/imgMap/imgSquareMap/sqr7.png", "qrc:/image/image/imgMap/imgSquareMap/sqr8.png", "qrc:/image/image/imgMap/imgSquareMap/sqr9.png", "qrc:/image/image/imgMap/imgSquareMap/sqr10.png", "qrc:/image/image/imgMap/imgSquareMap/sqr11.png", "qrc:/image/image/imgMap/imgSquareMap/sqr12.png", "qrc:/image/image/imgMap/imgSquareMap/sqr13.png", "qrc:/image/image/imgMap/imgSquareMap/sqr14.png", "qrc:/image/image/imgMap/imgSquareMap/sqr15.png", "qrc:/image/image/imgMap/imgSquareMap/sqr16.png", "qrc:/image/image/imgMap/imgSquareMap/sqr17.png", "qrc:/image/image/imgMap/imgSquareMap/sqr18.png", "qrc:/image/image/imgMap/imgSquareMap/sqr19.png", "qrc:/image/image/imgMap/imgSquareMap/sqr20.png", "qrc:/image/image/imgMap/imgSquareMap/sqr21.png", "qrc:/image/image/imgMap/imgSquareMap/sqr22.png", "qrc:/image/image/imgMap/imgSquareMap/sqr23.png", "qrc:/image/image/imgMap/imgSquareMap/sqr24.png", "qrc:/image/image/imgMap/imgSquareMap/sqr25.png", "qrc:/image/image/imgMap/imgSquareMap/sqr26.png", "qrc:/image/image/imgMap/imgSquareMap/sqr27.png", "qrc:/image/image/imgMap/imgSquareMap/sqr28.png", "qrc:/image/image/imgMap/imgSquareMap/sqr29.png", "qrc:/image/image/imgMap/imgSquareMap/sqr30.png", "qrc:/image/image/imgMap/imgSquareMap/sqr31.png", "qrc:/image/image/imgMap/imgSquareMap/sqr32.png", "qrc:/image/image/imgMap/imgSquareMap/sqr33.png", "qrc:/image/image/imgMap/imgSquareMap/sqr34.png", "qrc:/image/image/imgMap/imgSquareMap/sqr35.png", "qrc:/image/image/imgMap/imgSquareMap/sqr36.png"]
 
     property var lMdlLib: lMdl.lMldLib
     id: mainWin
@@ -49,7 +50,7 @@ Window {
                 break
             case 2:
                 methodDoubleGals()
-                if ((bpla_DG_onTop.x == 400) && (bpla_DG_onTop.y == 25)) {
+                if ((bpla_DG_onBot.x == 25) && (bpla_DG_onBot.y == 400)) {
                     stop()
                 }
                 break
@@ -113,12 +114,42 @@ Window {
                 border.color: "#e0d9d9"
                 border.width: 2
 
-                ItmMap {
-                    id: itmMap
-                    x: 11
-                    y: 3
+                SwipeView {
+                    property int crntIndxSvwMap: 1
+                    x: 12
+                    y: 6
+                    id: swpMap
                     width: 448
                     height: 448
+                    clip: true
+                    currentIndex: crntIndxSvwMap
+                    ItmMap {
+                        id: itmMap
+                        x: 11
+                        y: 3
+                        width: 448
+                        height: 448
+                    }
+
+                    Item {
+                        id: square
+                        x: 11
+                        y: 3
+                        width: 448
+                        height: 448
+                        ItmSquare {
+                            anchors.fill: parent
+                            sqrHeigth: parent.height + 30
+                            sqrWidth: parent.width + 10
+                            imgSquare: arrSqr[rand]
+                            Text {
+                                id: txtS
+                                text: rand
+                                font.pointSize: 21
+                                anchors.centerIn: parent
+                            }
+                        }
+                    }
                 }
             }
 
@@ -459,9 +490,9 @@ Window {
             }
             RadioButton {
                 id: radioButton1
-                x: 509
-                y: 145
-                text: qsTr("Парал-е галсирование")
+                x: 539
+                y: 142
+                text: qsTr("Галсирование")
                 font.pointSize: 10
                 font.bold: true
                 onClicked: {
@@ -522,6 +553,7 @@ Window {
                 if (nmbrSqr_8 == rand) {
                     console.log("Обьект найден")
                     rprtr.itemAt(nmbrSqr_8).color = "green"
+                    swpMap.currentIndex = 1
                     tmr.stop()
                 }
                 nmbrSqr_8 += nmbrIncrmnt
@@ -529,19 +561,20 @@ Window {
             break
         case 2:
 
-            if (((bpla_DG_onTop.x === (rprtr.itemAt(nmbrSqr_onTop).x + 25))
-                 && (bpla_DG_onTop.y === (rprtr.itemAt(
-                                              nmbrSqr_onTop).y + 25)))) {
+            if (((bpla_DG_onBot.x === (rprtr.itemAt(nmbrSqr_onBottom).x + 25))
+                 && (bpla_DG_onBot.y === (rprtr.itemAt(
+                                              nmbrSqr_onBottom).y + 25)))) {
                 console.log("Переход в новый квадрат поиска")
-                console.log(nmbrSqr_onTop + "-" + nmbrSqr_onBottom)
-                if ((nmbrSqr_onTop == rand) || (nmbrSqr_onBottom == rand)) {
+                console.log(bpla_DG_onBot + "-" + nmbrSqr_onBottom)
+                if ((nmbrSqr_onBottom == rand)) {
                     //var obj =
                     console.log("Обьект найден")
                     rprtr.itemAt(rand).color = "green"
+                    swpMap.currentIndex = 1
                     tmr.stop()
                 }
 
-                nmbrSqr_onTop += nmbrIncrmnt
+                // nmbrSqr_onTop += nmbrIncrmnt
                 nmbrSqr_onBottom += nmbrIncrmnt
             }
             break
@@ -553,6 +586,7 @@ Window {
                 if (nmbrSqr_8 == rand) {
                     console.log("Обьект найден")
                     rprtr.itemAt(nmbrSqr_8).color = "green"
+                    swpMap.currentIndex = 1
                     tmr.stop()
                 }
             }
@@ -563,20 +597,76 @@ Window {
 
         //Направление
         //Вверх/Вниз
-        if (((bpla_DG_onTop.x == 400) && (bpla_DG_onTop.y == 175))) {
-            indxTurn = 1
-            cntrUp++
-            nmbrSqr_onTop = 11
-            nmbrSqr_onBottom = 29
-            //xBPLA-=25
-            nmbrIncrmnt = -1
+        if (((bpla_DG_onBot.x == 400))) {
+            switch (bpla_DG_onBot.y) {
+            case 25:
+
+                // nmbrSqr_onTop = 11
+                nmbrSqr_onBottom = 11
+                indxTurn = 1
+
+                nmbrIncrmnt = -1
+                //xBPLA-=25
+                break
+                //            case 100:
+
+                //                nmbrSqr_onBottom = 17
+                //                indxTurn = 1
+                //                console.log("s")
+                //                nmbrIncrmnt = -1
+                //                break
+            case 175:
+                nmbrSqr_onBottom = 23
+                indxTurn = 1
+
+                nmbrIncrmnt = -1
+                break
+                //            case 250:
+                //                nmbrSqr_onBottom = 23
+                //                indxTurn = 1
+
+                //                nmbrIncrmnt = -1
+                //                break
+            case 325:
+                nmbrSqr_onBottom = 29
+                indxTurn = 1
+
+                nmbrIncrmnt = -1
+                break
+            }
         }
-        if (((bpla_DG_onTop.x == 25) && (bpla_DG_onTop.y == 100))) {
-            indxTurn = 1
-            nmbrSqr_onTop = 0
-            nmbrSqr_onBottom = 30
-            cntrUp++
-            nmbrIncrmnt = 1
+        if (((bpla_DG_onBot.x == 25))) {
+            switch (bpla_DG_onBot.y) {
+            case 100:
+
+                // nmbrSqr_onTop = 11
+                nmbrSqr_onBottom = 12
+                indxTurn = 3
+                nmbrIncrmnt = 1
+                //xBPLA-=25
+                break
+                //            case 175:
+
+                //                nmbrSqr_onBottom = 12
+                //                indxTurn = 3
+                //                nmbrIncrmnt = 1
+                //                break
+            case 250:
+                nmbrSqr_onBottom = 24
+                indxTurn = 3
+                nmbrIncrmnt = 1
+                break
+                //            case 325:
+                //                nmbrSqr_onBottom = 24
+                //                indxTurn = 3
+                //                nmbrIncrmnt = 1
+                //                break
+            case 400:
+                nmbrSqr_onBottom = 30
+                indxTurn = 3
+                nmbrIncrmnt = 1
+                break
+            }
         }
         //        if((rctnglBPLA_onTop_doubleGals.x == 25)&&(rctnglBPLA_onTop_doubleGals.y==400))
         //        {
@@ -589,11 +679,11 @@ Window {
         //        indxNapr = 2
         //               nmbrIncrmnt=-7
         //        }
-        if ((bpla_DG_onTop.x == 0) && (bpla_DG_onTop.y == 25)) {
-            indxTurn = 0
-            nmbrIncrmnt = 1
-            //stop()
-        }
+        //        if ((bpla_DG_onBot.x == 0) && (bpla_DG_onBot.y == 25)) {
+        //            indxTurn = 0
+        //            nmbrIncrmnt = 1
+        //            //stop()
+        //        }
         inArea()
         //Движение
         switch (indxTurn) {
@@ -603,23 +693,32 @@ Window {
             anmtn_DG.complete()
             xBPLA += 25
             break
-            //вверх(Вниз)
+            //вверх(влево)
         case 1:
             anmtn_DG.start()
             anmtn_DG.complete()
 
             yBPLA_DG_onBot += 75
-            yBPLA_DG_onTop -= 75
+            // yBPLA_DG_onTop -= 75
             indxTurn = 2
 
             break
+
             //влево
         case 2:
             anmtn_DG.start()
             anmtn_DG.complete()
-            if (cntrUp != 2) {
-                xBPLA -= 25
-            }
+
+            xBPLA -= 25
+
+            break
+        case 3:
+            anmtn_DG.start()
+            anmtn_DG.complete()
+
+            yBPLA_DG_onBot += 75
+            // yBPLA_DG_onTop -= 75
+            indxTurn = 0
             break
         }
     }
@@ -697,17 +796,17 @@ Window {
         case 1:
             bpla_8.visible = true
             bpla_DG_onBot.visible = false
-            bpla_DG_onTop.visible = false
+            //bpla_DG_onTop.visible = false
             break
         case 2:
             bpla_8.visible = false
             bpla_DG_onBot.visible = true
-            bpla_DG_onTop.visible = true
+            //bpla_DG_onTop.visible = true
             break
         case 3:
             bpla_8.visible = true
             bpla_DG_onBot.visible = false
-            bpla_DG_onTop.visible = false
+            // bpla_DG_onTop.visible = false
             break
         }
     }
@@ -735,20 +834,20 @@ Window {
         case 2:
             indxTurn = 0
             cntrUp = 0
-            nmbrSqr_onBottom = 18
-            nmbrSqr_onTop = 12
+            nmbrSqr_onBottom = 0
 
+            //  nmbrSqr_onTop = 12
             nmbrIncrmnt = 1
             xBPLA = 25
             bpla_DG_onBot.x = 0
-            bpla_DG_onTop.x = 0
 
-            bpla_DG_onBot.y = 250
-            bpla_DG_onTop.y = 175
+            //bpla_DG_onTop.x = 0
+            bpla_DG_onBot.y = 25
+            // bpla_DG_onTop.y = 175
             // xBPLA = 25
             //  yBPLA_8 = 50
-            yBPLA_DG_onTop = 175
-            yBPLA_DG_onBot = 250
+            //yBPLA_DG_onTop = 175
+            yBPLA_DG_onBot = 25
             break
         case 3:
             bpla_8.x = 175
@@ -768,7 +867,7 @@ Window {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:0.9}D{i:18}D{i:20}D{i:22}
+    D{i:0;formeditorZoom:1.33}
 }
 ##^##*/
 

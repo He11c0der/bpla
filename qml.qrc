@@ -23,5 +23,43 @@
         <file>image/imgMainPage/imgLib.png</file>
         <file>image/imgMainPage/pause.png</file>
         <file>image/imgMainPage/repeat.png</file>
+        <file>image/imgMap/imgMap.png</file>
+        <file>image/imgMap/imgSquareMap/sqr1.png</file>
+        <file>image/imgMap/imgSquareMap/sqr10.png</file>
+        <file>image/imgMap/imgSquareMap/sqr11.png</file>
+        <file>image/imgMap/imgSquareMap/sqr12.png</file>
+        <file>image/imgMap/imgSquareMap/sqr13.png</file>
+        <file>image/imgMap/imgSquareMap/sqr14.png</file>
+        <file>image/imgMap/imgSquareMap/sqr15.png</file>
+        <file>image/imgMap/imgSquareMap/sqr16.png</file>
+        <file>image/imgMap/imgSquareMap/sqr17.png</file>
+        <file>image/imgMap/imgSquareMap/sqr18.png</file>
+        <file>image/imgMap/imgSquareMap/sqr19.png</file>
+        <file>image/imgMap/imgSquareMap/sqr2.png</file>
+        <file>image/imgMap/imgSquareMap/sqr20.png</file>
+        <file>image/imgMap/imgSquareMap/sqr21.png</file>
+        <file>image/imgMap/imgSquareMap/sqr22.png</file>
+        <file>image/imgMap/imgSquareMap/sqr23.png</file>
+        <file>image/imgMap/imgSquareMap/sqr24.png</file>
+        <file>image/imgMap/imgSquareMap/sqr25.png</file>
+        <file>image/imgMap/imgSquareMap/sqr26.png</file>
+        <file>image/imgMap/imgSquareMap/sqr27.png</file>
+        <file>image/imgMap/imgSquareMap/sqr28.png</file>
+        <file>image/imgMap/imgSquareMap/sqr29.png</file>
+        <file>image/imgMap/imgSquareMap/sqr3.png</file>
+        <file>image/imgMap/imgSquareMap/sqr30.png</file>
+        <file>image/imgMap/imgSquareMap/sqr31.png</file>
+        <file>image/imgMap/imgSquareMap/sqr32.png</file>
+        <file>image/imgMap/imgSquareMap/sqr33.png</file>
+        <file>image/imgMap/imgSquareMap/sqr34.png</file>
+        <file>image/imgMap/imgSquareMap/sqr35.png</file>
+        <file>image/imgMap/imgSquareMap/sqr36.png</file>
+        <file>image/imgMap/imgSquareMap/sqr4.png</file>
+        <file>image/imgMap/imgSquareMap/sqr5.png</file>
+        <file>image/imgMap/imgSquareMap/sqr6.png</file>
+        <file>image/imgMap/imgSquareMap/sqr7.png</file>
+        <file>image/imgMap/imgSquareMap/sqr8.png</file>
+        <file>image/imgMap/imgSquareMap/sqr9.png</file>
+        <file>image/imgMap/imgBPLA.png</file>
     </qresource>
 </RCC>
