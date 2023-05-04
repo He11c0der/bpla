@@ -27,6 +27,8 @@ Item {
 
             ItmSquare {
                 id: itmSquareDlgt
+                width: 75
+                height: 75
                 Text {
                     id: txt
                     text: index

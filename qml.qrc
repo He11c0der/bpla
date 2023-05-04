@@ -5,6 +5,7 @@
         <file>ItmMap.qml</file>
         <file>ItmSquare.qml</file>
         <file>Lmdl.qml</file>
+        <file>ImgTypeFrameOfIntlgnc.qml</file>
     </qresource>
     <qresource prefix="/image">
         <file>image/area-transformed.png</file>
@@ -61,5 +62,6 @@
         <file>image/imgMap/imgSquareMap/sqr8.png</file>
         <file>image/imgMap/imgSquareMap/sqr9.png</file>
         <file>image/imgMap/imgBPLA.png</file>
+        <file>image/imgMainPage/imgNotIdtfcnt.png</file>
     </qresource>
 </RCC>

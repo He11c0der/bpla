@@ -21,6 +21,7 @@ Window {
     // property var bpla_DG_onTop: itmMap.rctnglBPLA_onTop_doubleGals
     property var bpla_DG_onBot: itmMap.rctnglBPLA_onBot_doubleGals
     property var anmtn_DG: itmMap.prllAnmtnDoubleGals
+
     //property int : value
     //property int yy:  yBPLA[0].y_8
     property int cntrTimer: 0
@@ -31,9 +32,27 @@ Window {
     property var arrSqr: ["qrc:/image/image/imgMap/imgSquareMap/sqr1.png", "qrc:/image/image/imgMap/imgSquareMap/sqr2.png", "qrc:/image/image/imgMap/imgSquareMap/sqr3.png", "qrc:/image/image/imgMap/imgSquareMap/sqr4.png", "qrc:/image/image/imgMap/imgSquareMap/sqr5.png", "qrc:/image/image/imgMap/imgSquareMap/sqr6.png", "qrc:/image/image/imgMap/imgSquareMap/sqr7.png", "qrc:/image/image/imgMap/imgSquareMap/sqr8.png", "qrc:/image/image/imgMap/imgSquareMap/sqr9.png", "qrc:/image/image/imgMap/imgSquareMap/sqr10.png", "qrc:/image/image/imgMap/imgSquareMap/sqr11.png", "qrc:/image/image/imgMap/imgSquareMap/sqr12.png", "qrc:/image/image/imgMap/imgSquareMap/sqr13.png", "qrc:/image/image/imgMap/imgSquareMap/sqr14.png", "qrc:/image/image/imgMap/imgSquareMap/sqr15.png", "qrc:/image/image/imgMap/imgSquareMap/sqr16.png", "qrc:/image/image/imgMap/imgSquareMap/sqr17.png", "qrc:/image/image/imgMap/imgSquareMap/sqr18.png", "qrc:/image/image/imgMap/imgSquareMap/sqr19.png", "qrc:/image/image/imgMap/imgSquareMap/sqr20.png", "qrc:/image/image/imgMap/imgSquareMap/sqr21.png", "qrc:/image/image/imgMap/imgSquareMap/sqr22.png", "qrc:/image/image/imgMap/imgSquareMap/sqr23.png", "qrc:/image/image/imgMap/imgSquareMap/sqr24.png", "qrc:/image/image/imgMap/imgSquareMap/sqr25.png", "qrc:/image/image/imgMap/imgSquareMap/sqr26.png", "qrc:/image/image/imgMap/imgSquareMap/sqr27.png", "qrc:/image/image/imgMap/imgSquareMap/sqr28.png", "qrc:/image/image/imgMap/imgSquareMap/sqr29.png", "qrc:/image/image/imgMap/imgSquareMap/sqr30.png", "qrc:/image/image/imgMap/imgSquareMap/sqr31.png", "qrc:/image/image/imgMap/imgSquareMap/sqr32.png", "qrc:/image/image/imgMap/imgSquareMap/sqr33.png", "qrc:/image/image/imgMap/imgSquareMap/sqr34.png", "qrc:/image/image/imgMap/imgSquareMap/sqr35.png", "qrc:/image/image/imgMap/imgSquareMap/sqr36.png"]
 
     property var lMdlLib: lMdl.lMldLib
+    property var urlImgLibTplvsn: itmLibObj.urlImgTplvsn
+    property var urlImgLibVlm: itmLibObj.urlImgAcoustic
+    property int frmTplvsn: 0 //0 - отсутствие тепловизионного портрета; 1 - наличие тепловизионного портрета
+
+    property int frmRed: 0 //0 - отсутствие инфракрасного портрета; 1 - наличие тепловизионного портрета
+
+    property int frmVlm: 0 //0 - отсутствие звукового портрета; 1 - наличие тепловизионного портрета
+    property int cntrMethod8: 0
+    property int indxSqrOrMap: 0
+    property var arrBpla_8: [bpla_8, itmSqr.rctnglBPLA_8_sqr]
+    property var arrBplaSqr: [bpla_DG_onBot, itmSqr.rctnglBPLA_onBot_doubleGals_sqr]
+    property var arrRptr: [rprtr, itmSqr.rptrSqr]
+    property var arrAnmtnDG: [anmtn_DG, itmSqr.prllAnmtnDoubleGals_sqr]
+
     id: mainWin
     width: 740
     height: 680
+    minimumHeight: height
+    maximumHeight: height
+    minimumWidth: width
+    maximumWidth: width
     visible: true
     title: qsTr("BPLA")
 
@@ -97,7 +116,7 @@ Window {
         height: 680
         currentIndex: 0
         interactive: true
-
+        clip: true
         Item {
             id: strtItm
             width: 740
@@ -115,13 +134,14 @@ Window {
                 border.width: 2
 
                 SwipeView {
-                    property int crntIndxSvwMap: 1
+                    property int crntIndxSvwMap: 0
                     x: 12
                     y: 6
                     id: swpMap
                     width: 448
                     height: 448
                     clip: true
+                    orientation: Qt.Vertical
                     currentIndex: crntIndxSvwMap
                     ItmMap {
                         id: itmMap
@@ -133,15 +153,18 @@ Window {
 
                     Item {
                         id: square
-                        x: 11
-                        y: 3
+
                         width: 448
                         height: 448
                         ItmSquare {
+                            id: itmSqr
                             anchors.fill: parent
-                            sqrHeigth: parent.height + 30
-                            sqrWidth: parent.width + 10
+                            x: Math.round((parent.width - width) / 2)
+                            y: Math.round((parent.height - height) / 2)
+                            sqrHeigth: parent.height + 90
+                            sqrWidth: parent.width + 40
                             imgSquare: arrSqr[rand]
+
                             Text {
                                 id: txtS
                                 text: rand
@@ -292,6 +315,19 @@ Window {
                     width: 13
                     height: 56
                 }
+
+                ComboBox {
+                    id: comboBox
+                    x: 5
+                    y: 282
+                    width: 196
+                    height: 40
+                    //textRole: ""
+                    currentIndex: 0
+
+                    //displayText:
+                    model: ["Танк", "Машина", "Электростанция"]
+                }
             }
 
             Label {
@@ -299,7 +335,7 @@ Window {
                 x: 558
                 y: 12
                 color: "#ffffff"
-                text: qsTr("Виды разведки")
+                text: qsTr("Параметры поиска")
                 font.bold: true
                 font.pointSize: 10
             }
@@ -308,31 +344,65 @@ Window {
                 id: frame1
                 x: 12
                 y: 541
-                width: 712
+                width: 376
                 height: 131
 
-                Pane {
-                    id: pane1
+                Rectangle {
+                    id: rctnglTplvsn
                     x: 0
                     y: 27
                     width: 108
                     height: 80
+                    color: "#00ffffff"
+                    radius: 2
+                    border.color: "#000000"
+
+                    Image {
+                        id: imgTplvsn
+                        anchors.fill: parent
+                        source: urlImgLibTplvsn[1]
+                        fillMode: Image.PreserveAspectFit
+                    }
                 }
 
-                Pane {
-                    id: pane2
+                Rectangle {
+                    id: rctnglRed
                     x: 122
                     y: 27
                     width: 108
                     height: 80
+                    color: "#00ffffff"
+                    radius: 2
+                    border.width: 1
+
+                    Image {
+                        id: imgRed
+                        anchors.fill: parent
+                        source: urlImgLibVlm[1]
+                        anchors.leftMargin: 0
+                        anchors.rightMargin: 0
+                        anchors.bottomMargin: -15
+                        anchors.topMargin: -13
+                        fillMode: Image.PreserveAspectFit
+                    }
                 }
 
-                Pane {
-                    id: pane3
+                Rectangle {
+                    id: rctnglVlm
                     x: 244
                     y: 27
                     width: 108
                     height: 80
+                    color: "#00ffffff"
+                    radius: 2
+                    border.width: 1
+
+                    Image {
+                        id: imgVlm
+                        anchors.fill: parent
+                        source: "qrc:/image/image/imgMainPage/imgNotIdtfcnt.png"
+                        fillMode: Image.PreserveAspectFit
+                    }
                 }
             }
 
@@ -472,8 +542,8 @@ Window {
             }
             RadioButton {
                 id: radioButton
-                x: 536
-                y: 44
+                x: 500
+                y: 51
                 text: qsTr("Восьмерка")
                 font.pointSize: 10
                 font.bold: true
@@ -490,8 +560,8 @@ Window {
             }
             RadioButton {
                 id: radioButton1
-                x: 539
-                y: 142
+                x: 500
+                y: 137
                 text: qsTr("Галсирование")
                 font.pointSize: 10
                 font.bold: true
@@ -728,6 +798,10 @@ Window {
             indxTurn = 1
             xBPLA -= 50
             nmbrIncrmnt = 5
+            if (cntrMethod8 == 1) {
+                tmr.stop()
+            }
+            cntrMethod8++
         }
 
         if ((bpla_8.x == 25) && (bpla_8.y == 400)) {
@@ -867,7 +941,7 @@ Window {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:1.33}
+    D{i:0;formeditorZoom:0.75}
 }
 ##^##*/
 
