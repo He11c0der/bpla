@@ -1,9 +1,19 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.12
+import QtQml.Models 2.12
 
 Window {
-    property int rand: 0
+    property int randObjOne: -1 //Номер квадрата 1 объекта
+    property int randObjTwo: -1 //Номер квадрата 2 объекта
+    property int randObjThree: -1 //Номер квадрата 3 объекта
+    property var arrObj: ["Танк", "Машина", "Электростанция"]
+    property var arrRndInSqr: [-1, -1, -1]
+    property var arrRnd: [randObjOne, randObjTwo, randObjThree]
+    property string txtPp: ""
+    property int nmbrSqrPp: 0
+    property double tmOfFly: 0
+    property int cntrJrnl: 1
     property int methodOfSeeking: 1 //1 - восьмерка //2-Параллельное галсирование
     // property bool seek: false
     property int nmbrSqr_8: 0
@@ -21,7 +31,7 @@ Window {
     // property var bpla_DG_onTop: itmMap.rctnglBPLA_onTop_doubleGals
     property var bpla_DG_onBot: itmMap.rctnglBPLA_onBot_doubleGals
     property var anmtn_DG: itmMap.prllAnmtnDoubleGals
-
+    property int evadeSqr: 0
     //property int : value
     //property int yy:  yBPLA[0].y_8
     property int cntrTimer: 0
@@ -37,7 +47,7 @@ Window {
     property int frmTplvsn: 0 //0 - отсутствие тепловизионного портрета; 1 - наличие тепловизионного портрета
 
     property int frmRed: 0 //0 - отсутствие инфракрасного портрета; 1 - наличие тепловизионного портрета
-
+    property int indxBlck: 0
     property int frmVlm: 0 //0 - отсутствие звукового портрета; 1 - наличие тепловизионного портрета
     property int cntrMethod8: 0
     property int indxSqrOrMap: 0
@@ -45,7 +55,8 @@ Window {
     property var arrBplaSqr: [bpla_DG_onBot, itmSqr.rctnglBPLA_onBot_doubleGals_sqr]
     property var arrRptr: [rprtr, itmSqr.rptrSqr]
     property var arrAnmtnDG: [anmtn_DG, itmSqr.prllAnmtnDoubleGals_sqr]
-
+    property var arrAnmtnX: [itmMap.xAnmtn, itmSqr.xAnmtn_sqr]
+    property var arrAnmtnY: [itmMap.yAnmtn, itmSqr.yAnmtn_sqr]
     id: mainWin
     width: 740
     height: 680
@@ -55,7 +66,132 @@ Window {
     maximumWidth: width
     visible: true
     title: qsTr("BPLA")
+    Popup {
+        id: ppMsg
+        width: 500
+        height: (swpMap.currentIndex == 0) ? 200 : 150
+        //opacity: 0.9
+        modal: true
+        focus: true
+        x: Math.round((parent.width - width) / 2)
+        y: Math.round((parent.height - height) / 2)
+        Rectangle {
+            id: rctnglPp
+            anchors.fill: parent
 
+            // color: "green"
+            radius: 2
+            border.color: "#f80707"
+            border.width: 3
+            gradient: Gradient {
+                GradientStop {
+                    position: 0.00
+                    color: "#f4d03f"
+                }
+                GradientStop {
+                    position: 1.00
+                    color: "#16a085"
+                }
+            }
+            Column {
+                id: clmnPp
+                anchors.fill: parent
+
+                spacing: 53
+
+                // z: 2
+                Text {
+                    id: txtAttntn
+                    color: "red"
+                    //  visible: false
+                    text: (swpMap.currentIndex
+                           == 0) ? ("В квадрате №" + nmbrSqrPp
+                                    + " возможно нахождение объекта типа "
+                                    + txtPp) : ("В квадрате №" + nmbrSqrPp
+                                                + " найден объект типа " + txtPp)
+                    anchors.top: parent.top
+                    font.pixelSize: 12
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.WordWrap
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.topMargin: 50
+                    //  anchors.horizontalCenter: parent.horizontalCenter
+                    font.bold: true
+                    font.family: "Tahoma"
+                }
+
+                Button {
+                    id: btnPpStart
+                    anchors.top: parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.topMargin: 70
+                    text: "Продолжить поиск объектов в районе"
+                    onClicked: {
+                        if (swpMap.currentIndex == 1) {
+                            swpMap.currentIndex = 0
+                            indxSqrOrMap = 0
+                            arrRndInSqr = [-1, -1, -1]
+                            //restart()
+                        }
+                        console.log(indxSqrOrMap)
+                        ppMsg.close()
+                        //tmr.start()
+                    }
+                }
+                Button {
+                    id: btnPpInSqr
+                    anchors.top: parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.topMargin: 120
+                    visible: (swpMap.currentIndex == 0) ? true : false
+                    text: "Перейти к поиску объекта в квадрате"
+                    onClicked: {
+                        ppMsg.close()
+                        swpMap.currentIndex = 1
+                        indxSqrOrMap = 1
+                        switch (methodOfSeeking) {
+                        case 1:
+                            indxTurn = 0
+                            arrBpla_8[indxSqrOrMap].y = 25
+                            arrBpla_8[indxSqrOrMap].x = 0
+                            xBPLA = 25
+                            yBPLA_8 = 50
+                            nmbrSqr_8 = 0
+                            break
+                        case 2:
+                            indxTurn = 0
+                            cntrUp = 0
+                            nmbrSqr_onBottom = 0
+
+                            //  nmbrSqr_onTop = 12
+                            nmbrIncrmnt = 1
+                            xBPLA = 25
+                            arrBplaSqr[indxSqrOrMap].x = 0
+
+                            //bpla_DG_onTop.x = 0
+                            arrBplaSqr[indxSqrOrMap].y = 25
+                            // bpla_DG_onTop.y = 175
+                            // xBPLA = 25
+                            //  yBPLA_8 = 50
+                            //yBPLA_DG_onTop = 175
+                            yBPLA_DG_onBot = 25
+                            break
+                        case 3:
+                            arrBpla_8[indxSqrOrMap].x = 175
+                            arrBpla_8[indxSqrOrMap].y = 175
+                            indxTurn = 1
+                            xBPLA = 150
+                            yBPLA_8 = 175
+                            nmbrSqr_8 = 14
+                            prmtrVector = 2
+                            cntrTurn = 0
+                            break
+                        }
+                    }
+                }
+            }
+        }
+    }
     Timer {
         id: tmr
         interval: 300
@@ -69,7 +205,8 @@ Window {
                 break
             case 2:
                 methodDoubleGals()
-                if ((bpla_DG_onBot.x == 25) && (bpla_DG_onBot.y == 400)) {
+                if ((arrBplaSqr[indxSqrOrMap].x == 25)
+                        && (arrBplaSqr[indxSqrOrMap].y == 400)) {
                     stop()
                 }
                 break
@@ -108,6 +245,7 @@ Window {
             orientation: Gradient.Vertical
         }
     }
+
     SwipeView {
         id: swpMain
         x: 0
@@ -163,14 +301,41 @@ Window {
                             y: Math.round((parent.height - height) / 2)
                             sqrHeigth: parent.height + 90
                             sqrWidth: parent.width + 40
-                            imgSquare: arrSqr[rand]
+                            imgSquare: arrSqr[nmbrSqrPp]
 
                             Text {
                                 id: txtS
-                                text: rand
+                                text: nmbrSqrPp
                                 font.pointSize: 21
                                 anchors.centerIn: parent
                             }
+                        }
+                    }
+                }
+
+                TabBar {
+                    id: tabBar
+                    x: 122
+                    y: 460
+                    width: 240
+                    visible: false
+
+                    TabButton {
+                        id: tabButton
+                        text: qsTr("Карта")
+                        onClicked: {
+                            indxSqrOrMap = 0
+                            swpMap.currentIndex = 0
+                        }
+                    }
+
+                    TabButton {
+                        id: tabButton1
+                        visible: false
+                        text: qsTr("Квадрат")
+                        onClicked: {
+                            indxSqrOrMap = 1
+                            swpMap.currentIndex = 1
                         }
                     }
                 }
@@ -212,9 +377,11 @@ Window {
                     y: 355
                     width: 63
                     height: 56
-                    source: "qrc:/image/image/search-transformed.png"
+                    source: "qrc:/image/image/imgMainPage/play.png"
                     fillMode: Image.PreserveAspectFit
-
+                    enabled: (((!checkBox.checked) && (!checkBox1.checked)
+                               && (!checkBox2.checked))
+                              || (indxBlck == 0)) ? false : true
                     MouseArea {
                         id: mouseArea
                         anchors.fill: parent
@@ -224,7 +391,18 @@ Window {
                             imgSeek.opacity = 0.8
                         }
                         onClicked: {
+
+                            //                            if (checkBox.checked) {
+                            //                                randObjOne = randomize(35)
+                            //                            }
+                            //                            if (checkBox1.checked) {
+                            //                                randObjTwo = randomize(35)
+                            //                            }
+                            //                            if (checkBox2.checked) {
+                            //                                randObjThree = randomize(35)
+                            //                            }
                             tmr.start()
+                            timeOfFly.start()
                         }
                         onPressed: {
                             imgSeek.opacity = 0.5
@@ -254,6 +432,9 @@ Window {
                     height: 56
                     source: "qrc:/image/image/imgMainPage/pause.png"
                     fillMode: Image.PreserveAspectFit
+                    enabled: (((!checkBox.checked) && (!checkBox1.checked)
+                               && (!checkBox2.checked))
+                              || (indxBlck == 0)) ? false : true
                     MouseArea {
                         id: msaImgPause
                         anchors.fill: parent
@@ -271,6 +452,7 @@ Window {
                         }
                         onClicked: {
                             tmr.stop()
+                            timeOfFly.stop()
                         }
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
@@ -283,6 +465,9 @@ Window {
                     y: 355
                     width: 63
                     height: 56
+                    enabled: (((!checkBox.checked) && (!checkBox1.checked)
+                               && (!checkBox2.checked))
+                              || (indxBlck == 0)) ? false : true
                     source: "qrc:/image/image/imgMainPage/repeat.png"
                     fillMode: Image.PreserveAspectFit
                     MouseArea {
@@ -316,17 +501,59 @@ Window {
                     height: 56
                 }
 
-                ComboBox {
-                    id: comboBox
-                    x: 5
-                    y: 282
-                    width: 196
+                CheckBox {
+                    //property int cntr_: 0
+                    id: checkBox
+                    x: 0
+                    y: 247
+                    width: 94
                     height: 40
-                    //textRole: ""
-                    currentIndex: 0
+                    text: qsTr("Танк")
+                    font.bold: true
 
-                    //displayText:
-                    model: ["Танк", "Машина", "Электростанция"]
+                    onClicked: {
+                        if (checkBox.checked) {
+                            randObjOne = randomize(35)
+                        } else if (!checkBox.checked) {
+                            randObjOne = -1
+                        }
+                        console.log(randObjOne)
+                    }
+                }
+
+                CheckBox {
+                    id: checkBox1
+                    x: 0
+                    y: 293
+                    width: 114
+                    height: 40
+                    text: qsTr("Машина")
+                    font.bold: true
+                    onClicked: {
+                        if (checkBox1.checked) {
+                            randObjTwo = randomize(35)
+                        } else if (!checkBox1.checked) {
+                            randObjTwo = -1
+                        }
+                        console.log(randObjTwo)
+                    }
+                }
+
+                CheckBox {
+                    id: checkBox2
+                    x: 0
+                    y: 201
+                    width: 184
+                    height: 40
+                    text: qsTr("Электростанция")
+                    font.bold: true
+                    onClicked: {
+                        if (checkBox2.checked) {
+                            randObjThree = randomize(35)
+                        } else if (!checkBox2.checked) {
+                            randObjThree = -1
+                        }
+                    }
                 }
             }
 
@@ -344,55 +571,16 @@ Window {
                 id: frame1
                 x: 12
                 y: 541
-                width: 376
+                width: 473
                 height: 131
 
                 Rectangle {
-                    id: rctnglTplvsn
-                    x: 0
-                    y: 27
-                    width: 108
-                    height: 80
-                    color: "#00ffffff"
-                    radius: 2
-                    border.color: "#000000"
-
-                    Image {
-                        id: imgTplvsn
-                        anchors.fill: parent
-                        source: urlImgLibTplvsn[1]
-                        fillMode: Image.PreserveAspectFit
-                    }
-                }
-
-                Rectangle {
-                    id: rctnglRed
-                    x: 122
-                    y: 27
-                    width: 108
-                    height: 80
-                    color: "#00ffffff"
-                    radius: 2
-                    border.width: 1
-
-                    Image {
-                        id: imgRed
-                        anchors.fill: parent
-                        source: urlImgLibVlm[1]
-                        anchors.leftMargin: 0
-                        anchors.rightMargin: 0
-                        anchors.bottomMargin: -15
-                        anchors.topMargin: -13
-                        fillMode: Image.PreserveAspectFit
-                    }
-                }
-
-                Rectangle {
                     id: rctnglVlm
-                    x: 244
-                    y: 27
+                    x: 324
+                    y: 183
                     width: 108
                     height: 80
+                    visible: false
                     color: "#00ffffff"
                     radius: 2
                     border.width: 1
@@ -404,8 +592,69 @@ Window {
                         fillMode: Image.PreserveAspectFit
                     }
                 }
-            }
 
+                Rectangle {
+                    id: rectangle3
+                    x: -12
+                    y: -12
+                    width: 473
+                    height: 131
+                    color: "#ffffff"
+                    border.width: 2
+                    ListView {
+                        id: lv
+                        anchors.fill: parent
+                        anchors.bottomMargin: 0
+                        cacheBuffer: 380
+                        boundsMovement: Flickable.StopAtBounds
+                        // boundsBehavior: Flickable.StopAtBounds
+                        //snapMode: ListView.SnapToItem
+                        // boundsMovement: Flickable.StopAtBounds
+                        //  anchors.bottomMargin: 24
+                        boundsBehavior: Flickable.DragAndOvershootBounds
+
+                        keyNavigationWraps: true
+                        spacing: 10
+                        model: itmLmdlJrnl
+                        delegate: contactDelegate
+                        clip: true
+                        focus: true
+                        // ListView.PullBackHeader: true
+                        Component {
+                            id: contactDelegate
+
+                            Item {
+                                width: 180
+                                height: 40
+                                Column {
+                                    spacing: -4
+                                    Text {
+                                        text: '<b>Отчет №</b> ' + mdl_nmbr
+                                    }
+                                    Text {
+                                        text: '<b>Время поиска:</b> ' + mdl_time_seeking
+                                    }
+                                    Text {
+                                        text: '<b>Результат поиска:</b> ' + mdl_result_seeking
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            ListModel {
+                id: itmLmdlJrnl
+            }
+            Timer {
+                id: timeOfFly
+                running: false
+                repeat: true
+                interval: 100
+                onTriggered: {
+                    tmOfFly++
+                }
+            }
             Label {
                 id: label1
                 x: 25
@@ -416,61 +665,10 @@ Window {
                 font.pointSize: 10
             }
 
-            Label {
-                id: label2
-                x: 17
-                y: 541
-                width: 115
-                height: 35
-                color: "#ffffff"
-                text: qsTr("Тепловизионная разведка")
-                horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.WordWrap
-                font.italic: false
-                font.underline: false
-                font.family: "Tahoma"
-                font.bold: false
-                font.pointSize: 10
-            }
-
-            Label {
-                id: label3
-                x: 138
-                y: 541
-                width: 115
-                height: 35
-                color: "#ffffff"
-                text: qsTr("Инфракрасная разведка")
-                horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.WordWrap
-                font.italic: false
-                font.underline: false
-                font.family: "Tahoma"
-                font.bold: false
-                font.pointSize: 10
-            }
-
-            Label {
-                id: label4
-                x: 269
-                y: 541
-                width: 102
-                height: 35
-                color: "#ffffff"
-                text: qsTr("Звуковая разведка")
-                horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.WordWrap
-                font.italic: false
-                font.underline: false
-                font.family: "Tahoma"
-                font.bold: false
-                font.pointSize: 10
-            }
-
             Rectangle {
                 id: rctnglLib
-                x: 544
-                y: 550
+                x: 572
+                y: 549
                 width: 101
                 height: 81
                 color: "#d7d5d5"
@@ -501,9 +699,10 @@ Window {
                 Label {
                     id: lblLib
                     x: -18
-                    y: 79
+                    y: 84
                     color: "#ffffff"
                     text: qsTr("Библиотека портретов обьектов")
+                    anchors.horizontalCenterOffset: 0
                     font.family: "Tahoma"
                     font.bold: true
                     font.pointSize: 9
@@ -548,10 +747,11 @@ Window {
                 font.pointSize: 10
                 font.bold: true
                 onClicked: {
+                    indxBlck = 1
                     methodOfSeeking = 1
                     sceneBPLA(methodOfSeeking)
-                    bpla_8.x = 0
-                    bpla_8.y = 25
+                    arrBpla_8[indxSqrOrMap].x = 0
+                    arrBpla_8[indxSqrOrMap].y = 25
                     indxTurn = 0
                     xBPLA = 25
                     yBPLA_8 = 50
@@ -560,12 +760,13 @@ Window {
             }
             RadioButton {
                 id: radioButton1
-                x: 500
-                y: 137
+                x: 495
+                y: 109
                 text: qsTr("Галсирование")
                 font.pointSize: 10
                 font.bold: true
                 onClicked: {
+                    indxBlck = 1
                     methodOfSeeking = 2
                     sceneBPLA(methodOfSeeking)
                     indxTurn = 0
@@ -576,15 +777,16 @@ Window {
             RadioButton {
                 id: radioButton2
                 x: 500
-                y: 218
+                y: 169
                 text: qsTr("Расширяющийся квадрат")
                 font.pointSize: 10
                 font.bold: true
                 onClicked: {
+                    indxBlck = 1
                     methodOfSeeking = 3
                     sceneBPLA(methodOfSeeking)
-                    bpla_8.x = 175
-                    bpla_8.y = 175
+                    arrBpla_8[indxSqrOrMap].x = 175
+                    arrBpla_8[indxSqrOrMap].y = 175
                     indxTurn = 1
                     xBPLA = 150
                     yBPLA_8 = 175
@@ -604,60 +806,93 @@ Window {
     function randomize(range) {
         return (Math.random() * range)
     }
+    function inSqr(nmbrSqr, i, indx) {
+        switch (indx) {
+        case 0:
+            if (nmbrSqr == arrRnd[i]) {
+                console.log("Обьект найден")
+                nmbrSqrPp = nmbrSqr
+                txtPp = arrObj[i]
+                arrRndInSqr[i] = nmbrSqr
+                console.log(arrRndInSqr[0], arrRndInSqr[1], arrRndInSqr[2])
+                // rprtr.itemAt(nmbrSqr_8).color = "green"
+                //swpMap.currentIndex = 1
+                tmr.stop()
+                ppMsg.open()
+
+                itmLmdlJrnl.append({
+                                       "mdl_nmbr": cntrJrnl,
+                                       "mdl_time_seeking": tmOfFly,
+                                       "mdl_result_seeking": txtAttntn.text
+                                   })
+                cntrJrnl++
+                timeOfFly.stop()
+            }
+            break
+        case 1:
+            if (nmbrSqr == arrRndInSqr[i]) {
+                console.log("Обьект найден")
+                nmbrSqrPp = nmbrSqr
+                txtPp = arrObj[i]
+                // rprtr.itemAt(nmbrSqr_8).color = "green"
+                //swpMap.currentIndex = 1
+                tmr.stop()
+                ppMsg.open()
+
+                itmLmdlJrnl.append({
+                                       "mdl_nmbr": cntrJrnl,
+                                       "mdl_time_seeking": tmOfFly,
+                                       "mdl_result_seeking": txtAttntn.text
+                                   })
+                cntrJrnl++
+                timeOfFly.stop()
+            }
+
+            break
+        }
+    }
     function inArea() {
 
-        // console.log("x:" + rectangle.x)
-        // console.log(rptr.itemAt(nmbrSqr).x+25)
-        //console.log("y:" + rectangle.y)
-
-        //  console.log(rptr.itemAt(nmbrSqr).y+25)
-
-        //console.log(rptr.itemAt().x + 25)
-        //console.log(i)
         switch (methodOfSeeking) {
         case 1:
-            if ((bpla_8.x === (rprtr.itemAt(nmbrSqr_8).x + 25))
-                    && (bpla_8.y === (rprtr.itemAt(nmbrSqr_8).y + 25))) {
+            if ((arrBpla_8[indxSqrOrMap].x === (arrRptr[indxSqrOrMap].itemAt(
+                                                    nmbrSqr_8).x + 25))
+                    && (arrBpla_8[indxSqrOrMap].y === (arrRptr[indxSqrOrMap].itemAt(
+                                                           nmbrSqr_8).y + 25))) {
                 console.log("Переход в новый квадрат поиска")
                 console.log(nmbrSqr_8)
-                if (nmbrSqr_8 == rand) {
-                    console.log("Обьект найден")
-                    rprtr.itemAt(nmbrSqr_8).color = "green"
-                    swpMap.currentIndex = 1
-                    tmr.stop()
+                for (var i = 0; i < arrRnd.length; i++) {
+                    inSqr(nmbrSqr_8, i, indxSqrOrMap)
                 }
                 nmbrSqr_8 += nmbrIncrmnt
             }
             break
         case 2:
 
-            if (((bpla_DG_onBot.x === (rprtr.itemAt(nmbrSqr_onBottom).x + 25))
-                 && (bpla_DG_onBot.y === (rprtr.itemAt(
-                                              nmbrSqr_onBottom).y + 25)))) {
+            if (((arrBplaSqr[indxSqrOrMap].x === (arrRptr[indxSqrOrMap].itemAt(
+                                                      nmbrSqr_onBottom).x + 25))
+                 && (arrBplaSqr[indxSqrOrMap].y === (arrRptr[indxSqrOrMap].itemAt(
+                                                         nmbrSqr_onBottom).y + 25)))) {
                 console.log("Переход в новый квадрат поиска")
-                console.log(bpla_DG_onBot + "-" + nmbrSqr_onBottom)
-                if ((nmbrSqr_onBottom == rand)) {
-                    //var obj =
-                    console.log("Обьект найден")
-                    rprtr.itemAt(rand).color = "green"
-                    swpMap.currentIndex = 1
-                    tmr.stop()
+                console.log(arrBplaSqr[indxSqrOrMap] + "-" + nmbrSqr_onBottom)
+                for (var i = 0; i < arrRnd.length; i++) {
+                    inSqr(nmbrSqr_onBottom, i, indxSqrOrMap)
                 }
-
                 // nmbrSqr_onTop += nmbrIncrmnt
                 nmbrSqr_onBottom += nmbrIncrmnt
             }
             break
         case 3:
-            if ((bpla_8.x === (rprtr.itemAt(nmbrSqr_8).x + 25))
-                    && (bpla_8.y === (rprtr.itemAt(nmbrSqr_8).y + 25))) {
+            if ((arrBpla_8[indxSqrOrMap].x === (arrRptr[indxSqrOrMap].itemAt(
+                                                    nmbrSqr_8).x + 25))
+                    && (arrBpla_8[indxSqrOrMap].y === (arrRptr[indxSqrOrMap].itemAt(
+                                                           nmbrSqr_8).y + 25))) {
                 console.log("Переход в новый квадрат поиска")
                 console.log(nmbrSqr_8)
-                if (nmbrSqr_8 == rand) {
-                    console.log("Обьект найден")
-                    rprtr.itemAt(nmbrSqr_8).color = "green"
-                    swpMap.currentIndex = 1
-                    tmr.stop()
+
+                for (var i = 0; i < arrRnd.length; i++) {
+
+                    inSqr(nmbrSqr_8, i, indxSqrOrMap)
                 }
             }
             break
@@ -667,8 +902,8 @@ Window {
 
         //Направление
         //Вверх/Вниз
-        if (((bpla_DG_onBot.x == 400))) {
-            switch (bpla_DG_onBot.y) {
+        if (((arrBplaSqr[indxSqrOrMap].x == 400))) {
+            switch (arrBplaSqr[indxSqrOrMap].y) {
             case 25:
 
                 // nmbrSqr_onTop = 11
@@ -705,8 +940,8 @@ Window {
                 break
             }
         }
-        if (((bpla_DG_onBot.x == 25))) {
-            switch (bpla_DG_onBot.y) {
+        if (((arrBplaSqr[indxSqrOrMap].x == 25))) {
+            switch (arrBplaSqr[indxSqrOrMap].y) {
             case 100:
 
                 // nmbrSqr_onTop = 11
@@ -755,18 +990,17 @@ Window {
         //            //stop()
         //        }
         inArea()
+        arrAnmtnDG[indxSqrOrMap].start()
+        arrAnmtnDG[indxSqrOrMap].complete()
         //Движение
         switch (indxTurn) {
             //вправо
         case 0:
-            anmtn_DG.start()
-            anmtn_DG.complete()
+
             xBPLA += 25
             break
             //вверх(влево)
         case 1:
-            anmtn_DG.start()
-            anmtn_DG.complete()
 
             yBPLA_DG_onBot += 75
             // yBPLA_DG_onTop -= 75
@@ -776,15 +1010,11 @@ Window {
 
             //влево
         case 2:
-            anmtn_DG.start()
-            anmtn_DG.complete()
 
             xBPLA -= 25
 
             break
         case 3:
-            anmtn_DG.start()
-            anmtn_DG.complete()
 
             yBPLA_DG_onBot += 75
             // yBPLA_DG_onTop -= 75
@@ -794,26 +1024,32 @@ Window {
     }
     function method_8() {
 
-        if ((bpla_8.x == 400) && (bpla_8.y == 25)) {
+        if ((arrBpla_8[indxSqrOrMap].x == 400)
+                && (arrBpla_8[indxSqrOrMap].y == 25)) {
             indxTurn = 1
             xBPLA -= 50
             nmbrIncrmnt = 5
             if (cntrMethod8 == 1) {
                 tmr.stop()
             }
-            cntrMethod8++
+            if (indxSqrOrMap == 0) {
+                cntrMethod8++
+            }
         }
 
-        if ((bpla_8.x == 25) && (bpla_8.y == 400)) {
+        if ((arrBpla_8[indxSqrOrMap].x == 25)
+                && (arrBpla_8[indxSqrOrMap].y == 400)) {
 
             indxTurn = 0
             nmbrIncrmnt = 1
         }
-        if ((bpla_8.x == 400) && (bpla_8.y == 400)) {
+        if ((arrBpla_8[indxSqrOrMap].x == 400)
+                && (arrBpla_8[indxSqrOrMap].y == 400)) {
             indxTurn = 2
             nmbrIncrmnt = -7
         }
-        if ((bpla_8.x == 25) && (bpla_8.y == 25)) {
+        if ((arrBpla_8[indxSqrOrMap].x == 25)
+                && (arrBpla_8[indxSqrOrMap].y == 25)) {
             indxTurn = 0
             nmbrIncrmnt = 1
             //stop()
@@ -822,23 +1058,23 @@ Window {
         switch (indxTurn) {
         case 0:
 
-            itmMap.xAnmtn.start()
-            itmMap.xAnmtn.complete()
+            arrAnmtnX[indxSqrOrMap].start()
+            arrAnmtnX[indxSqrOrMap].complete()
             xBPLA += 25
             break
         case 1:
-            itmMap.xAnmtn.start()
-            itmMap.yAnmtn.start()
-            itmMap.xAnmtn.complete()
-            itmMap.yAnmtn.complete()
+            arrAnmtnX[indxSqrOrMap].start()
+            arrAnmtnY[indxSqrOrMap].start()
+            arrAnmtnX[indxSqrOrMap].complete()
+            arrAnmtnY[indxSqrOrMap].complete()
             xBPLA -= 25
             yBPLA_8 += 25
             break
         case 2:
-            itmMap.xAnmtn.start()
-            itmMap.yAnmtn.start()
-            itmMap.xAnmtn.complete()
-            itmMap.yAnmtn.complete()
+            arrAnmtnX[indxSqrOrMap].start()
+            arrAnmtnY[indxSqrOrMap].start()
+            arrAnmtnX[indxSqrOrMap].complete()
+            arrAnmtnY[indxSqrOrMap].complete()
             xBPLA -= 25
             yBPLA_8 -= 25
             break
@@ -846,52 +1082,54 @@ Window {
     }
     function methodExpSquare() {
         inArea()
-        if (tmr.running) {
+        if ((tmr.running) || (evadeSqr == 1)) {
             if (cntrTurn <= prmtrVector) {
 
                 if (cntrTurn >= prmtrVector / 2) {
 
-                    bpla_8.y += 75 * indxTurn
+                    arrBpla_8[indxSqrOrMap].y += 75 * indxTurn
                     nmbrSqr_8 += 6 * indxTurn
                     //itmMap.yAnmtn.start()
                     // itmMap.yAnmtn.complete()
                 } else {
 
-                    bpla_8.x += 75 * indxTurn
+                    arrBpla_8[indxSqrOrMap].x += 75 * indxTurn
                     nmbrSqr_8 += indxTurn
                     //itmMap.xAnmtn.start()
                     //itmMap.xAnmtn.complete()
                 }
             }
         }
+        evadeSqr = 0
     }
     function sceneBPLA(a) {
         switch (a) {
         case 1:
-            bpla_8.visible = true
-            bpla_DG_onBot.visible = false
+            arrBpla_8[indxSqrOrMap].visible = true
+            arrBplaSqr[indxSqrOrMap].visible = false
             //bpla_DG_onTop.visible = false
             break
         case 2:
-            bpla_8.visible = false
-            bpla_DG_onBot.visible = true
+            arrBpla_8[indxSqrOrMap].visible = false
+            arrBplaSqr[indxSqrOrMap].visible = true
             //bpla_DG_onTop.visible = true
             break
         case 3:
-            bpla_8.visible = true
-            bpla_DG_onBot.visible = false
+            arrBpla_8[indxSqrOrMap].visible = true
+            arrBplaSqr[indxSqrOrMap].visible = false
             // bpla_DG_onTop.visible = false
             break
         }
     }
 
     Component.onCompleted: {
+
         //var yBPLA=[{"y_8":50},{"y_g_top":325}]
         //arr["first"] = 50
         //console.log(arr["first"])
         //console.log(yBPLA[0].y_8 + 25)
-        rand = randomize(35)
-        console.log("Искомый обьект находится в квадрате " + rand)
+
+        // console.log("Искомый обьект находится в квадрате " + randObjOne)
     }
     function restart() {
         tmr.stop()
@@ -899,8 +1137,8 @@ Window {
         switch (methodOfSeeking) {
         case 1:
             indxTurn = 0
-            bpla_8.y = 25
-            bpla_8.x = 0
+            arrBpla_8[indxSqrOrMap].y = 25
+            arrBpla_8[indxSqrOrMap].x = 0
             xBPLA = 25
             yBPLA_8 = 50
             nmbrSqr_8 = 0
@@ -913,10 +1151,10 @@ Window {
             //  nmbrSqr_onTop = 12
             nmbrIncrmnt = 1
             xBPLA = 25
-            bpla_DG_onBot.x = 0
+            arrBplaSqr[indxSqrOrMap].x = 0
 
             //bpla_DG_onTop.x = 0
-            bpla_DG_onBot.y = 25
+            arrBplaSqr[indxSqrOrMap].y = 25
             // bpla_DG_onTop.y = 175
             // xBPLA = 25
             //  yBPLA_8 = 50
@@ -924,8 +1162,8 @@ Window {
             yBPLA_DG_onBot = 25
             break
         case 3:
-            bpla_8.x = 175
-            bpla_8.y = 175
+            arrBpla_8[indxSqrOrMap].x = 175
+            arrBpla_8[indxSqrOrMap].y = 175
             indxTurn = 1
             xBPLA = 150
             yBPLA_8 = 175
@@ -934,7 +1172,7 @@ Window {
             cntrTurn = 0
             break
         }
-        rprtr.itemAt(rand).color = "#b83c3c"
+        //rprtr.itemAt(randObjOne).color = "#b83c3c"
         tmr.restart()
     }
 }
