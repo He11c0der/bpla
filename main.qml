@@ -45,7 +45,7 @@ Window {
     property var urlImgLibTplvsn: itmLibObj.urlImgTplvsn
     property var urlImgLibVlm: itmLibObj.urlImgAcoustic
     property int frmTplvsn: 0 //0 - отсутствие тепловизионного портрета; 1 - наличие тепловизионного портрета
-
+    property int cntrStopSqr: 0
     property int frmRed: 0 //0 - отсутствие инфракрасного портрета; 1 - наличие тепловизионного портрета
     property int indxBlck: 0
     property int frmVlm: 0 //0 - отсутствие звукового портрета; 1 - наличие тепловизионного портрета
@@ -133,6 +133,7 @@ Window {
                             arrRndInSqr = [-1, -1, -1]
                             //restart()
                         }
+
                         console.log(indxSqrOrMap)
                         ppMsg.close()
                         //tmr.start()
@@ -157,6 +158,7 @@ Window {
                             xBPLA = 25
                             yBPLA_8 = 50
                             nmbrSqr_8 = 0
+                            cntrMethod8 = 0
                             break
                         case 2:
                             indxTurn = 0
@@ -259,6 +261,33 @@ Window {
             id: strtItm
             width: 740
             height: 680
+
+            GroupBox {
+                id: groupBox1
+                x: 495
+                y: 206
+                width: 229
+                height: 189
+                font.underline: true
+                font.bold: true
+                font.pointSize: 8
+                title: qsTr("Объекты поиска")
+            }
+
+            GroupBox {
+                id: groupBox
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.topMargin: 34
+                anchors.bottomMargin: 472
+                anchors.leftMargin: 495
+                anchors.rightMargin: 16
+                font.underline: true
+                font.bold: true
+                title: qsTr("Способы ведения разведки")
+            }
 
             Rectangle {
                 id: rectangle1
@@ -557,16 +586,6 @@ Window {
                 }
             }
 
-            Label {
-                id: lblIntlgncType
-                x: 558
-                y: 12
-                color: "#ffffff"
-                text: qsTr("Параметры поиска")
-                font.bold: true
-                font.pointSize: 10
-            }
-
             Frame {
                 id: frame1
                 x: 12
@@ -758,10 +777,11 @@ Window {
                     nmbrSqr_8 = 0
                 }
             }
+
             RadioButton {
                 id: radioButton1
-                x: 495
-                y: 109
+                x: 500
+                y: 106
                 text: qsTr("Галсирование")
                 font.pointSize: 10
                 font.bold: true
@@ -777,7 +797,7 @@ Window {
             RadioButton {
                 id: radioButton2
                 x: 500
-                y: 169
+                y: 160
                 text: qsTr("Расширяющийся квадрат")
                 font.pointSize: 10
                 font.bold: true
@@ -809,24 +829,31 @@ Window {
     function inSqr(nmbrSqr, i, indx) {
         switch (indx) {
         case 0:
-            if (nmbrSqr == arrRnd[i]) {
-                console.log("Обьект найден")
-                nmbrSqrPp = nmbrSqr
-                txtPp = arrObj[i]
-                arrRndInSqr[i] = nmbrSqr
-                console.log(arrRndInSqr[0], arrRndInSqr[1], arrRndInSqr[2])
-                // rprtr.itemAt(nmbrSqr_8).color = "green"
-                //swpMap.currentIndex = 1
-                tmr.stop()
-                ppMsg.open()
 
-                itmLmdlJrnl.append({
-                                       "mdl_nmbr": cntrJrnl,
-                                       "mdl_time_seeking": tmOfFly,
-                                       "mdl_result_seeking": txtAttntn.text
-                                   })
-                cntrJrnl++
-                timeOfFly.stop()
+            if (nmbrSqr == arrRnd[i]) {
+                if (cntrStopSqr == 1) {
+
+                    cntrStopSqr = 0
+                } else {
+                    console.log("Обьект найден")
+                    nmbrSqrPp = nmbrSqr
+                    txtPp = arrObj[i]
+                    arrRndInSqr[i] = nmbrSqr
+                    console.log(arrRndInSqr[0], arrRndInSqr[1], arrRndInSqr[2])
+                    // rprtr.itemAt(nmbrSqr_8).color = "green"
+                    //swpMap.currentIndex = 1
+                    tmr.stop()
+                    ppMsg.open()
+
+                    itmLmdlJrnl.append({
+                                           "mdl_nmbr": cntrJrnl,
+                                           "mdl_time_seeking": tmOfFly,
+                                           "mdl_result_seeking": txtAttntn.text
+                                       })
+                    cntrJrnl++
+                    timeOfFly.stop()
+                    cntrStopSqr = 1
+                }
             }
             break
         case 1:
@@ -1029,12 +1056,6 @@ Window {
             indxTurn = 1
             xBPLA -= 50
             nmbrIncrmnt = 5
-            if (cntrMethod8 == 1) {
-                tmr.stop()
-            }
-            if (indxSqrOrMap == 0) {
-                cntrMethod8++
-            }
         }
 
         if ((arrBpla_8[indxSqrOrMap].x == 25)
@@ -1052,6 +1073,13 @@ Window {
                 && (arrBpla_8[indxSqrOrMap].y == 25)) {
             indxTurn = 0
             nmbrIncrmnt = 1
+            if (cntrMethod8 == 1) {
+                tmr.stop()
+                //cntrMethod8 = 0
+            }
+            if (indxSqrOrMap == 0) {
+                cntrMethod8++
+            }
             //stop()
         }
         inArea()
@@ -1176,10 +1204,3 @@ Window {
         tmr.restart()
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorZoom:0.75}
-}
-##^##*/
-
